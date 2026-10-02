@@ -1,5 +1,5 @@
 # PASSO A PASSO
-# 1: Titulo - Sistema de Vendas
+# Titulo - Sistema de Vendas
 
 # Seção cadastrar vendas
     # Campo de data
@@ -37,13 +37,21 @@ produtos = ["Notebook", "Celular", "Fone"]
 st.write("# SISTEMA DE VENDAS")
 
 # SEÇÃO DE CADASTRO DE VENDAS
-st.write("## Cadastrar Vendas")
-data = st.datetime_input("Data")
-vendedor = st.selectbox("Vendedor", vendedores)
-produto = st.selectbox("Produto", produtos)
-quantidade = st.number_input("Quantidade", step=1)
-valor = st.number_input("Valor")
-botao_cadastrar = st.button("Cadastrar Venda")
+st.sidebar.write("## Cadastrar Vendas")
+data = st.sidebar.date_input("Data")
+vendedor = st.sidebar.selectbox("Vendedor", vendedores)
+produto = st.sidebar.selectbox("Produto", produtos)
+quantidade = st.sidebar.number_input("Quantidade", step=1)
+valor = st.sidebar.number_input("Valor")
+botao_cadastrar = st.sidebar.button("Cadastrar Venda")
+
+# Lógica do botão de cadastro
+if botao_cadastrar:
+    nova_venda = [str(data), vendedor, produto, quantidade, valor]
+    ultima_linha = len(tabela_vendas) # Encontra a última linha no banco de dados
+    tabela_vendas.loc[ultima_linha] = nova_venda # Adiciona a nova venda na última linha
+    tabela_vendas.to_csv("vendas.csv", index = False) # Atualizando o banco de dados
+    st.success("Venda Cadastrada")
 
 # SEÇÃO DE VISUALIZAR VENDAS
 st.write("## Vendas Cadastradas")
@@ -61,5 +69,5 @@ grafico1 = px.bar(tabela_vendas, x = "vendedor", y = "valor", color = "produto")
 st.plotly_chart(grafico1)
 
 # Gráfico de pizza - venda por produto
-grafico2 = px.pie(tabela_vendas, names = "produtos", values= "valor")
+grafico2 = px.pie(tabela_vendas, names = "produto", values= "valor", hole = 0.5)
 st.plotly_chart(grafico2)
